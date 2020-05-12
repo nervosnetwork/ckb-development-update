@@ -32,6 +32,7 @@ main() {
     SEQ_SEARCH_IN=$(( SEQ_SEARCH_IN - 1 ))
   fi
   local SEQ=$(find $SEQ_SEARCH_IN -name '*.md' | sed 's/.*-\([^-]*\)\.md$/\1/' | sort -nr | head -n 1)
+  SEQ=$((SEQ + 1))
 
   local TITLE="Nervos CKB Development Update #${SEQ}"
   local FILENAME="${YYYYMMDD}_Nervos-CKB-Development-Update-${SEQ}.md"
