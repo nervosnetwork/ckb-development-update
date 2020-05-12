@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+[ -n "${DEBUG:-}" ] && set -x || true
+
+BSD_DATE=no
+if date -j &> /dev/null; then
+  BSD_DATE=yes
+fi
+DATE_FORMAT='+%b %-d'
+
+n_days_ago() {
+  local N="$1"
+  if [ "$BSD_DATE" = yes ]; then
+    local TIMESTAMP=$(( "$(date '+%s')" - 86400 * N ))
+    set -x
+    date -jf '%s' "$TIMESTAMP" "$DATE_FORMAT"
+  else
+    set -x
+    date --date "today - $N days" "$DATE_FORMAT"
+  fi
+  set +x
+}
+
+main() {
+  local YYYY="$(date '+%Y')"
+  local YYYYMMDD="$(date '+%Y-%m-%d')"
+
+  local SEQ_SEARCH_IN="$YYYY"
+  if ! [ -d "$YYYY" ]; then
+    SEQ_SEARCH_IN=$(( SEQ_SEARCH_IN - 1 ))
+  fi
+  local SEQ=$(find $SEQ_SEARCH_IN -name '*.md' | sed 's/.*-\([^-]*\)\.md$/\1/' | sort -nr | head -n 1)
+
+  local TITLE="Nervos CKB Development Update #${SEQ}"
+  local FILENAME="${YYYYMMDD}_Nervos-CKB-Development-Update-${SEQ}.md"
+
+  local SAFE_TITLE="$(echo "$TITLE" | tr 'A-Z' 'a-z' | tr -s '\\/ :,#' '-')"
+
+  git checkout -b "$SAFE_TITLE"
+  mkdir -p "$YYYY"
+  if ! [ -f "$YYYY/$FILENAME" ]; then
+    ( echo "# $TITLE"; \
+      echo; \
+      echo "Covering $(n_days_ago 15) to $(n_days_ago 2)"; \
+      echo; \
+      cat .template.md
+    ) > "$YYYY/$FILENAME"
+  fi
+
+  "${EDITOR:-vim}" "$YYYY/$FILENAME"
+  git add "$YYYY/$FILENAME"
+  git commit -m "$TITLE"
+}
+
+main "$@"
