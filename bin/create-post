@@ -12,13 +12,17 @@ DATE_FORMAT='+%b %-d'
 
 n_days_ago() {
   local N="$1"
+  local FORMAT="$DATE_FORMAT"
+  if [ "$2" = "yes" ]; then
+    FORMAT="$FORMAT, %Y"
+  fi
   if [ "$BSD_DATE" = yes ]; then
     local TIMESTAMP=$(( "$(date '+%s')" - 86400 * N ))
     set -x
-    date -jf '%s' "$TIMESTAMP" "$DATE_FORMAT"
+    date -jf '%s' "$TIMESTAMP" "$FORMAT"
   else
     set -x
-    date --date "today - $N days" "$DATE_FORMAT"
+    date --date "today - $N days" "$FORMAT"
   fi
   set +x
 }
@@ -44,7 +48,7 @@ main() {
   if ! [ -f "$YYYY/$FILENAME" ]; then
     ( echo "# $TITLE"; \
       echo; \
-      echo "Covering $(n_days_ago 15) to $(n_days_ago 2)"; \
+      echo "Covering $(n_days_ago 15 no) to $(n_days_ago 2 yes)"; \
       echo; \
       cat .template.md
     ) > "$YYYY/$FILENAME"
