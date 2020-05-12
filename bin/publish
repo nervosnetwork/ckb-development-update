@@ -13,7 +13,7 @@ POST_FILE="$(ls "$SEQ_SEARCH_IN" | tail -n 1)"
 TITLE="$(head -n 1 "$SEQ_SEARCH_IN/$POST_FILE" | sed 's/^# //')"
 
 # httpie
-http --json POST "https://api.medium.com/v1/users/$MEDIUM_AUTHOR_ID/posts" \
+http --ignore-stdin --json POST "https://api.medium.com/v1/users/$MEDIUM_AUTHOR_ID/posts" \
   'Authorization':"Bearer $MEDIUM_TOKEN" \
   'Content-Type':'application/json; charset=utf-8' \
   publishStatus="draft" \
