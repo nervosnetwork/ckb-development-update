@@ -12,8 +12,7 @@ jobs:
 
     - name: install httpie
       run: |
-        pip install --upgrade httpie
-        sudo ln -snf "$(which httpie)" /usr/local/bin/http
+        sudo pip3 install --upgrade httpie
 
     - name: publish
       run: bin/publish
