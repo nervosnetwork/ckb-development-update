@@ -1,0 +1,20 @@
+name: Publish
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  medium:
+    runs-on: ubuntu-latest
+    name: Publish to Medium
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install httpie
+      run: sudo apt install -y httpie
+
+    - name: publish
+      run: bin/publish
+      env:
+        MEDIUM_TOKEN: ${{ secrets.MEDIUM_TOKEN }}
+        MEDIUM_AUTHOR_ID: ${{ secrets.MEDIUM_AUTHOR_ID }}
