@@ -18,13 +18,10 @@ n_days_ago() {
   fi
   if [ "$BSD_DATE" = yes ]; then
     local TIMESTAMP=$(( "$(date '+%s')" - 86400 * N ))
-    set -x
     date -jf '%s' "$TIMESTAMP" "$FORMAT"
   else
-    set -x
     date --date "today - $N days" "$FORMAT"
   fi
-  set +x
 }
 
 main() {
